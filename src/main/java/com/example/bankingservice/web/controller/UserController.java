@@ -29,7 +29,6 @@ public class UserController {
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable Long id){
         User user = userService.getById(id);
-        System.out.println(user);
         return userMapper.toDto(user);
     }
 

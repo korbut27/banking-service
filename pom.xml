@@ -60,7 +60,6 @@
 			<version>${liquibase.version}</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>

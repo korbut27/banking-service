@@ -1,6 +1,7 @@
 package com.example.bankingservice.domain.account;
 
 import com.example.bankingservice.domain.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -23,4 +24,16 @@ public class Account {
     @Column(name = "balance")
     private BigDecimal balance;
 
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", balance=" + balance +
+                '}';
+    }
 }

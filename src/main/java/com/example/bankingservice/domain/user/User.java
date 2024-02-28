@@ -1,5 +1,6 @@
 package com.example.bankingservice.domain.user;
 
+import com.example.bankingservice.domain.account.Account;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -25,6 +26,10 @@ public class User implements Serializable {
 
     @Transient
     private String passwordConfirmation;
+
+    @OneToOne(mappedBy = "user")
+    private Account account;
+
 
     @Column(name = "mobile_number")
     @ElementCollection

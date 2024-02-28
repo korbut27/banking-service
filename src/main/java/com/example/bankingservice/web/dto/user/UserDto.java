@@ -1,5 +1,6 @@
 package com.example.bankingservice.web.dto.user;
 
+import com.example.bankingservice.domain.account.Account;
 import com.example.bankingservice.web.dto.validation.OnCreate;
 import com.example.bankingservice.web.dto.validation.OnUpdate;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,6 +31,8 @@ public class UserDto {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotNull(message = "Password confirmation must be not null.", groups = {OnCreate.class})
     private String passwordConfirmation;
+
+    private Account account;
 
     private Set<String> mobileNumbers;
 
