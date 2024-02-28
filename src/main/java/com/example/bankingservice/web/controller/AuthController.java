@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.SortedMap;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -28,10 +30,8 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserService userService;
-    private final AccountService accountService;
 
     private final UserMapper userMapper;
-    private final AccountMapper accountMapper;
 
     @PostMapping("/login")
     public JwtResponse login(@Validated @RequestBody JwtRequest loginRequest){
@@ -39,18 +39,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public UserDto register(@RequestBody ObjectNode objectNode){
-        ObjectMapper objectMapper = new ObjectMapper();
-        UserDto userDto = objectMapper.convertValue(objectNode.get("userDto"), UserDto.class);
-        AccountDto accountDto = objectMapper.convertValue(objectNode.get("accountDto"), AccountDto.class);
-
+    public UserDto register(@Validated @RequestBody UserDto userDto){
         User user = userMapper.toEntity(userDto);
         User createdUser = userService.create(user);
-
-        Account account = accountMapper.toEntity(accountDto);
-        Account createdAccount = accountService.create(account, createdUser);
-
-        createdUser.setAccount(createdAccount);
         return userMapper.toDto(createdUser);
 
     }

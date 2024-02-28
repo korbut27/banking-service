@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -21,6 +22,8 @@ public class User implements Serializable {
     private String username;
     @Column(name = "full_name")
     private String fullName;
+    @Column(name = "birth_date")
+    private Date birthDate;
     @Column(name = "password")
     private String password;
 
@@ -31,11 +34,11 @@ public class User implements Serializable {
     private Account account;
 
 
-    @Column(name = "mobile_number")
+    @Column(name = "phone_number")
     @ElementCollection
-    @CollectionTable(name = "users_mobile_numbers")
+    @CollectionTable(name = "users_phone_numbers")
     @Enumerated(value = EnumType.STRING)
-    private Set<String> mobileNumbers;
+    private Set<String> phoneNumbers;
 
     @Column(name = "email")
     @ElementCollection
