@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User addPhoneNumber(Long id, String phoneNumber) {
         if (userRepository.findById(id).isEmpty()) {
-            throw new IllegalStateException("User not found.");
+            throw new ResourceNotFoundException("User not found.");
         }
 
         userRepository.savePhoneNumber(id, phoneNumber);
@@ -97,8 +97,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void delete(Long id) {
-        if (userRepository.findById(id).isPresent()) {
-                throw new ResourceNotFoundException("User not found.");
+        if (userRepository.findById(id).isEmpty()) {
+            throw new ResourceNotFoundException("User not found.");
         }
         userRepository.deleteById(id);
     }
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
     public void deletePhoneNumber(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
-        if(user.getPhoneNumbers().size() == 1){
+        if (user.getPhoneNumbers().size() == 1) {
             throw new IllegalStateException(
                     "Unable to delete the last phone number."
             );
@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
     public void deleteEmail(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
-        if(user.getPhoneNumbers().size() == 1){
+        if (user.getPhoneNumbers().size() == 1) {
             throw new IllegalStateException(
                     "Unable to delete the last email."
             );
@@ -155,5 +155,6 @@ public class UserServiceImpl implements UserService {
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
+
 }
 

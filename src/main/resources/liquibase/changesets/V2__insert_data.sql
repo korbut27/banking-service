@@ -7,8 +7,8 @@ VALUES (1, 1000.00),
        (2, 500.00);
 
 INSERT INTO users_phone_numbers (user_id, phone_number)
-VALUES (1, '+71234567890'),
-       (2, '+71234567891');
+VALUES (1, '71234567890'),
+       (2, '71234567891');
 
 INSERT INTO users_emails (user_id, email)
 VALUES (1, 'qefkako@ad'),

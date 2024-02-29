@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
@@ -27,4 +28,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
             @Param("recipientId") Long recipientId,
             @Param("amount") BigDecimal amount
     );
+
+    Optional<Account> findByUserId(Long id);
 }

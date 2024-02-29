@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,6 +22,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public Account create(Account account, User user) {
+        if (accountRepository.findByUserId(user.getId()).isPresent()) {
+            throw new IllegalStateException("Account already exists.");
+        }
         account.setUser(user);
         accountRepository.save(account);
         return account;
@@ -34,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
                         String.format("Account with id %d not found.", senderId)
                 ));
 
-        if (accountRepository.findById(senderId).isEmpty()) {
+        if (accountRepository.findById(recipientId).isEmpty()) {
             throw new ResourceNotFoundException(
                     String.format("Account with id %d not found.", recipientId)
             );
@@ -46,4 +50,5 @@ public class AccountServiceImpl implements AccountService {
 
         accountRepository.transferFunds(senderId, recipientId, amount);
     }
+
 }

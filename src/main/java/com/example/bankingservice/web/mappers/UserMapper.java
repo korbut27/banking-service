@@ -1,6 +1,5 @@
 package com.example.bankingservice.web.mappers;
 
-
 import com.example.bankingservice.domain.user.User;
 import com.example.bankingservice.web.dto.user.UserDto;
 import org.mapstruct.Mapper;

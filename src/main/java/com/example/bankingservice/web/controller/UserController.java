@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +51,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/account")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public AccountDto createAccount(@PathVariable Long id,
                                     @Validated @RequestBody AccountDto dto) {
         Account account = accountMapper.toEntity(dto);
@@ -59,48 +61,57 @@ public class UserController {
     }
 
     @PostMapping("/{id}/phoneNumber")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public UserDto addPhoneNumber(@PathVariable Long id,
-                                  @Pattern(regexp = "^(7)([0-9]{10})$")
+                                  @Pattern(regexp = "^(7)([0-9]{10})$",
+                                          message = "Incorrect phone number format")
                                   @RequestParam String phoneNumber) {
         User updatedUser = userService.addPhoneNumber(id, phoneNumber);
         return userMapper.toDto(updatedUser);
     }
 
     @PostMapping("/{id}/email")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public UserDto addEmail(@PathVariable Long id,
-                            @Email
+                            @Email(message = "Incorrect email format")
                             @RequestParam String email) {
         User updatedUser = userService.addEmail(id, email);
         return userMapper.toDto(updatedUser);
     }
 
     @PutMapping("/{id}/phoneNumber")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public UserDto updatePhoneNumber(@PathVariable Long id,
-                                     @Pattern(regexp = "^(7)([0-9]{10})$")
+                                     @Pattern(regexp = "^(7)([0-9]{10})$",
+                                             message = "Incorrect phone number format")
                                      @RequestParam String phoneNumber) {
         User updatedUser = userService.updatePhoneNumber(id, phoneNumber);
         return userMapper.toDto(updatedUser);
     }
 
     @PutMapping("/{id}/email")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public UserDto updateEmail(@PathVariable Long id,
-                               @Email
+                               @Email(message = "Incorrect email format")
                                @RequestParam String email) {
         User updatedUser = userService.updateEmail(id, email);
         return userMapper.toDto(updatedUser);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public void deleteById(@PathVariable Long id) {
         userService.delete(id);
     }
 
     @DeleteMapping("/{id}/phoneNumber")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public void deletePhoneNumber(@PathVariable Long id) {
         userService.deletePhoneNumber(id);
     }
 
     @DeleteMapping("/{id}/email")
+    @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public void deleteEmail(@PathVariable Long id) {
         userService.deleteEmail(id);
     }
