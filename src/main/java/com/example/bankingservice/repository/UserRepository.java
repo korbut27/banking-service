@@ -16,9 +16,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     );
 
     @Query(value = """
-        INSERT INTO users_phone_numbers (user_id, phone_number)
-        VALUES (:userId, :phoneNumber);
-         """, nativeQuery = true)
+            INSERT INTO users_phone_numbers (user_id, phone_number)
+            VALUES (:userId, :phoneNumber);
+             """, nativeQuery = true)
     @Modifying
     void savePhoneNumber(
             @Param("userId") Long userId,
@@ -26,9 +26,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     );
 
     @Query(value = """
-        INSERT INTO users_emails (user_id, email)
-        VALUES (:userId, :email);
-         """, nativeQuery = true)
+            INSERT INTO users_emails (user_id, email)
+            VALUES (:userId, :email);
+             """, nativeQuery = true)
     @Modifying
     void saveEmail(
             @Param("userId") Long userId,
@@ -36,15 +36,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     );
 
     @Query(value = """
-    UPDATE users_phone_numbers
-    SET phone_number = :phoneNumber
-    WHERE phone_number = (
-        SELECT phone_number
-        FROM users_phone_numbers
-        WHERE user_id = :userId
-        LIMIT 1
-    )
-    """, nativeQuery = true)
+            UPDATE users_phone_numbers
+            SET phone_number = :phoneNumber
+            WHERE phone_number = (
+                SELECT phone_number
+                FROM users_phone_numbers
+                WHERE user_id = :userId
+                LIMIT 1
+            )
+            """, nativeQuery = true)
     @Modifying
     void updatePhoneNumber(
             @Param("userId") Long userId,
@@ -52,15 +52,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     );
 
     @Query(value = """
-    UPDATE users_emails
-    SET email = :email
-    WHERE email = (
-        SELECT email
-        FROM users_emails
-        WHERE user_id = :userId
-        LIMIT 1
-    )
-    """, nativeQuery = true)
+            UPDATE users_emails
+            SET email = :email
+            WHERE email = (
+                SELECT email
+                FROM users_emails
+                WHERE user_id = :userId
+                LIMIT 1
+            )
+            """, nativeQuery = true)
     @Modifying
     void updateEmail(
             @Param("userId") Long userId,
@@ -68,28 +68,28 @@ public interface UserRepository extends JpaRepository<User, Long> {
     );
 
     @Query(value = """
-    DELETE FROM users_phone_numbers
-    WHERE phone_number = (
-        SELECT phone_number
-        FROM users_phone_numbers
-        WHERE user_id = :userId
-        LIMIT 1
-    )
-    """, nativeQuery = true)
+            DELETE FROM users_phone_numbers
+            WHERE phone_number = (
+                SELECT phone_number
+                FROM users_phone_numbers
+                WHERE user_id = :userId
+                LIMIT 1
+            )
+            """, nativeQuery = true)
     @Modifying
     void deletePhoneNumber(
             @Param("userId") Long userId
     );
 
     @Query(value = """
-    DELETE FROM users_emails
-    WHERE email = (
-        SELECT email
-        FROM users_emails
-        WHERE user_id = :userId
-        LIMIT 1
-    )
-    """, nativeQuery = true)
+            DELETE FROM users_emails
+            WHERE email = (
+                SELECT email
+                FROM users_emails
+                WHERE user_id = :userId
+                LIMIT 1
+            )
+            """, nativeQuery = true)
     @Modifying
     void deleteEmail(
             @Param("userId") Long userId

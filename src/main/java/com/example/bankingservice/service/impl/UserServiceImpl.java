@@ -82,9 +82,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User addEmail(Long id, String email) {
         if (userRepository.findById(id).isEmpty()) {
-            throw new IllegalStateException("User not found.");
+            throw new ResourceNotFoundException("User not found.");
         }
-
         userRepository.saveEmail(id, email);
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
@@ -93,18 +92,36 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void delete(Long id) {
+        if (userRepository.findById(id).isPresent()) {
+                throw new ResourceNotFoundException("User not found.");
+        }
         userRepository.deleteById(id);
     }
 
     @Override
     @Transactional
     public void deletePhoneNumber(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+        if(user.getPhoneNumbers().size() == 1){
+            throw new IllegalStateException(
+                    "Unable to delete the last phone number."
+            );
+        }
+
         userRepository.deletePhoneNumber(id);
     }
 
     @Override
     @Transactional
     public void deleteEmail(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+        if(user.getPhoneNumbers().size() == 1){
+            throw new IllegalStateException(
+                    "Unable to delete the last email."
+            );
+        }
         userRepository.deleteEmail(id);
     }
 }
