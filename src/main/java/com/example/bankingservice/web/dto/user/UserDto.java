@@ -42,7 +42,8 @@ public class UserDto {
 
     @NotNull(message = "Phone number must be not null.")
     @Valid
-    private Set<@Pattern(regexp = "^(\\+7)([0-9]{10})$") String> phoneNumbers;
+    private Set<@Pattern(regexp = "^(\\+7)([0-9]{10})$",
+            message = "Incorrect phone number format") String> phoneNumbers;
 
     @NotNull(message = "Emails must not be empty.")
     @Valid

@@ -33,17 +33,14 @@ public class User implements Serializable {
     @OneToOne(mappedBy = "user")
     private Account account;
 
-
-    @Column(name = "phone_number")
     @ElementCollection
     @CollectionTable(name = "users_phone_numbers")
-    @Enumerated(value = EnumType.STRING)
+    @Column(name = "phone_number")
     private Set<String> phoneNumbers;
 
-    @Column(name = "email")
     @ElementCollection
+    @Column(name = "email")
     @CollectionTable(name = "users_emails")
-    @Enumerated(value = EnumType.STRING)
     private Set<String> emails;
 
 }

@@ -20,7 +20,7 @@ create table if not exists users_phone_numbers
     user_id       bigint       not null,
     phone_number varchar(255) not null unique,
     primary key (user_id, phone_number),
-    constraint fk_users_phone_numbers_users foreign key (user_id) references users (id) on delete cascade on update no action
+    constraint fk_users_phone_numbers_users foreign key (user_id) references users (id) on delete cascade on update cascade
 );
 
 create table if not exists users_emails
@@ -28,5 +28,5 @@ create table if not exists users_emails
     user_id  bigint       not null,
     email    varchar(255) not null unique,
     primary key (user_id, email),
-    constraint fk_users_emails_users foreign key (user_id) references users (id) on delete cascade on update no action
+    constraint fk_users_emails_users foreign key (user_id) references users (id) on delete cascade on update cascade
 );

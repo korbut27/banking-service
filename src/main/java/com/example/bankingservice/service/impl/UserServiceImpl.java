@@ -9,9 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Set;
-
 
 @Service
 @Transactional(readOnly = true)
@@ -29,21 +26,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public User getByUsername(String username) {
+    public User getByUsername(
+            final String username
+    ) {
         return userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found."));
+    }
+
+    @Override
+    @Transactional
+    public User updatePhoneNumber(Long id, String phoneNumber) {
+        userRepository.updatePhoneNumber(id, phoneNumber);
+        return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
 
     @Override
     @Transactional
-    public User update(User user) {
-        User existing = getById(user.getId());
-        existing.setFullName(user.getFullName());
-        user.setUsername(user.getUsername());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-        return user;
+    public User updateEmail(Long id, String email) {
+        userRepository.updateEmail(id, email);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
 
     @Override
@@ -64,8 +68,44 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public User addPhoneNumber(Long id, String phoneNumber) {
+        if (userRepository.findById(id).isEmpty()) {
+            throw new IllegalStateException("User not found.");
+        }
+
+        userRepository.savePhoneNumber(id, phoneNumber);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+    }
+
+    @Override
+    @Transactional
+    public User addEmail(Long id, String email) {
+        if (userRepository.findById(id).isEmpty()) {
+            throw new IllegalStateException("User not found.");
+        }
+
+        userRepository.saveEmail(id, email);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+    }
+
+    @Override
+    @Transactional
     public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void deletePhoneNumber(Long id) {
+        userRepository.deletePhoneNumber(id);
+    }
+
+    @Override
+    @Transactional
+    public void deleteEmail(Long id) {
+        userRepository.deleteEmail(id);
     }
 }
 
