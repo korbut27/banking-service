@@ -5,13 +5,18 @@ import com.example.bankingservice.domain.user.User;
 import com.example.bankingservice.service.AccountService;
 import com.example.bankingservice.service.UserService;
 import com.example.bankingservice.web.dto.account.AccountDto;
-import com.example.bankingservice.web.dto.user.ContactDataRequest;
 import com.example.bankingservice.web.dto.user.UserDto;
 import com.example.bankingservice.web.mappers.AccountMapper;
 import com.example.bankingservice.web.mappers.UserMapper;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -31,6 +36,19 @@ public class UserController {
         return userMapper.toDto(user);
     }
 
+    @GetMapping()
+    public Page<User> filterUsers(@RequestParam(required = false) LocalDate birthDate,
+                                  @RequestParam(required = false) String phoneNumber,
+                                  @RequestParam(required = false) String email,
+                                  @RequestParam(required = false) String fullName,
+                                  Pageable pageable) {
+        if (birthDate != null) return userService.getUsersByBirthDate(birthDate, pageable);
+        else if (phoneNumber != null) return userService.getUsersByPhoneNumber(phoneNumber, pageable);
+        else if (email != null) return userService.getUsersByEmail(email, pageable);
+        else if (fullName != null) return userService.getUsersByFullName(fullName, pageable);
+        else return userService.getAllUsers(pageable);
+    }
+
     @PostMapping("/{id}/account")
     public AccountDto createAccount(@PathVariable Long id,
                                     @Validated @RequestBody AccountDto dto) {
@@ -42,29 +60,33 @@ public class UserController {
 
     @PostMapping("/{id}/phoneNumber")
     public UserDto addPhoneNumber(@PathVariable Long id,
-                                  @Validated @RequestBody ContactDataRequest request) {
-        User updatedUser = userService.addPhoneNumber(id, request.getPhoneNumber());
+                                  @Pattern(regexp = "^(7)([0-9]{10})$")
+                                  @RequestParam String phoneNumber) {
+        User updatedUser = userService.addPhoneNumber(id, phoneNumber);
         return userMapper.toDto(updatedUser);
     }
 
     @PostMapping("/{id}/email")
     public UserDto addEmail(@PathVariable Long id,
-                            @Validated @RequestBody ContactDataRequest request) {
-        User updatedUser = userService.addEmail(id, request.getEmail());
+                            @Email
+                            @RequestParam String email) {
+        User updatedUser = userService.addEmail(id, email);
         return userMapper.toDto(updatedUser);
     }
 
     @PutMapping("/{id}/phoneNumber")
     public UserDto updatePhoneNumber(@PathVariable Long id,
-                                     @Validated @RequestBody ContactDataRequest request) {
-        User updatedUser = userService.updatePhoneNumber(id, request.getPhoneNumber());
+                                     @Pattern(regexp = "^(7)([0-9]{10})$")
+                                     @RequestParam String phoneNumber) {
+        User updatedUser = userService.updatePhoneNumber(id, phoneNumber);
         return userMapper.toDto(updatedUser);
     }
 
     @PutMapping("/{id}/email")
     public UserDto updateEmail(@PathVariable Long id,
-                               @Validated @RequestBody ContactDataRequest request) {
-        User updatedUser = userService.updateEmail(id, request.getEmail());
+                               @Email
+                               @RequestParam String email) {
+        User updatedUser = userService.updateEmail(id, email);
         return userMapper.toDto(updatedUser);
     }
 

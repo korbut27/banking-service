@@ -5,9 +5,14 @@ import com.example.bankingservice.domain.user.User;
 import com.example.bankingservice.repository.UserRepository;
 import com.example.bankingservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
 
 
 @Service
@@ -123,6 +128,32 @@ public class UserServiceImpl implements UserService {
             );
         }
         userRepository.deleteEmail(id);
+    }
+
+    @Override
+    public Page<User> getUsersByBirthDate(LocalDate birthDate, Pageable pageable) {
+        Timestamp timestamp = Timestamp.valueOf(birthDate.atStartOfDay());
+        return userRepository.findByBirthDate(timestamp, pageable);
+    }
+
+    @Override
+    public Page<User> getUsersByPhoneNumber(String phoneNumber, Pageable pageable) {
+        return userRepository.findByPhoneNumber(phoneNumber, pageable);
+    }
+
+    @Override
+    public Page<User> getUsersByEmail(String email, Pageable pageable) {
+        return userRepository.findByEmail(email, pageable);
+    }
+
+    @Override
+    public Page<User> getUsersByFullName(String fullName, Pageable pageable) {
+        return userRepository.findByFullNameLike(fullName, pageable);
+    }
+
+    @Override
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 }
 

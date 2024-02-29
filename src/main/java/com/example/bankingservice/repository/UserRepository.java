@@ -1,12 +1,17 @@
 package com.example.bankingservice.repository;
 
 import com.example.bankingservice.domain.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
@@ -94,4 +99,38 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void deleteEmail(
             @Param("userId") Long userId
     );
+
+    @Query(value = """
+            SELECT * FROM users u
+            WHERE u.birth_date > :birthDate
+            """, nativeQuery = true)
+    Page<User> findByBirthDate(
+            @Param("birthDate") Timestamp birthDate,
+            Pageable pageable
+    );
+
+    @Query(value = """
+            SELECT * FROM users u
+            WHERE u.id = (
+                SELECT user_id
+                FROM users_phone_numbers
+                WHERE phone_number = :phoneNumber
+            )
+            """, nativeQuery = true)
+    Page<User> findByPhoneNumber(String phoneNumber, Pageable pageable);
+
+    @Query(value = """
+            SELECT * FROM users u
+            WHERE u.id = (
+                SELECT user_id
+                FROM users_emails
+                WHERE email = :email
+            )
+            """, nativeQuery = true)
+    Page<User> findByEmail(String email, Pageable pageable);
+
+    @Query(value = """
+            SELECT * FROM users WHERE full_name LIKE :fullName%
+            """, nativeQuery = true)
+    Page<User> findByFullNameLike(String fullName, Pageable pageable);
 }
