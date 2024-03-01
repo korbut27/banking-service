@@ -9,10 +9,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @Log4j2
@@ -34,11 +36,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public Account create(Account account, User user) {
+    public Account create(BigDecimal initialDeposit, User user) {
         if (accountRepository.findByUserId(user.getId()).isPresent()) {
             throw new IllegalStateException("Account already exists.");
         }
-        account.setUser(user);
+        Account account = new Account(user, initialDeposit);
         accountRepository.save(account);
         logger.debug("The account has been saved in the database: " + account);
         return account;
@@ -66,6 +68,29 @@ public class AccountServiceImpl implements AccountService {
         logger.debug("User with id: {} transferred funds to user with id: {}, transfer amount - {}",
                 senderId, recipientId, amount);
 
+    }
+
+    @Override
+    @Scheduled(fixedRate = 60000)
+    @Transactional
+    public void increaseBalances() {
+        List<Account> accounts = accountRepository.findAll();
+        for (Account account : accounts) {
+            BigDecimal currentBalance = account.getBalance();
+            BigDecimal initialDeposit = account.getInitialDeposit();
+
+            BigDecimal newBalance = currentBalance.multiply(new BigDecimal("1.05")); // Increase balance by 5%
+            BigDecimal maxBalance = initialDeposit.multiply(new BigDecimal("2.07")); // Calculate the maximum balance (207% of initial deposit)
+
+            if (newBalance.compareTo(maxBalance) > 0) {
+                newBalance = maxBalance;
+            }
+
+            account.setBalance(newBalance);
+            accountRepository.save(account);
+        }
+
+        logger.debug("Client balances have been increased.");
     }
 
 }

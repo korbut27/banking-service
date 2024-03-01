@@ -14,5 +14,5 @@ public class AccountDto {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User user;
 
-    private BigDecimal balance;
+    private BigDecimal initialDeposit;
 }

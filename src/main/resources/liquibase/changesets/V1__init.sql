@@ -11,6 +11,7 @@ create table if not exists accounts
 (
     id      bigserial primary key,
     user_id bigint,
+    initial_deposit numeric(19, 2),
     balance numeric(19, 2),
     constraint fk_accounts_users foreign key (user_id) references users (id) on delete cascade on update no action
 );

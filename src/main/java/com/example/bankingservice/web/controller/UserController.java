@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @RestController
@@ -59,10 +60,9 @@ public class UserController {
     @Operation(summary = "Create account")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public AccountDto createAccount(@PathVariable Long id,
-                                    @Validated @RequestBody AccountDto dto) {
-        Account account = accountMapper.toEntity(dto);
+                                    @RequestParam BigDecimal initialDeposit) {
         User user = userService.getById(id);
-        Account createdAccount = accountService.create(account, user);
+        Account createdAccount = accountService.create(initialDeposit, user);
         return accountMapper.toDto(createdAccount);
     }
 
