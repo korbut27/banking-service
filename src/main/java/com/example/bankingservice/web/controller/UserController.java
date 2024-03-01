@@ -8,6 +8,8 @@ import com.example.bankingservice.web.dto.account.AccountDto;
 import com.example.bankingservice.web.dto.user.UserDto;
 import com.example.bankingservice.web.mappers.AccountMapper;
 import com.example.bankingservice.web.mappers.UserMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.time.LocalDate;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "User controller", description = "User API")
 public class UserController {
 
     private final UserService userService;
@@ -32,12 +35,14 @@ public class UserController {
     private final AccountMapper accountMapper;
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get UserDto by id")
     public UserDto getById(@PathVariable Long id) {
         User user = userService.getById(id);
         return userMapper.toDto(user);
     }
 
-    @GetMapping()
+    @GetMapping
+    @Operation(summary = "Get UsersDto with filter")
     public Page<User> filterUsers(@RequestParam(required = false) LocalDate birthDate,
                                   @RequestParam(required = false) String phoneNumber,
                                   @RequestParam(required = false) String email,
@@ -51,6 +56,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/account")
+    @Operation(summary = "Create account")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public AccountDto createAccount(@PathVariable Long id,
                                     @Validated @RequestBody AccountDto dto) {
@@ -61,6 +67,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/phoneNumber")
+    @Operation(summary = "Add phone number")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public UserDto addPhoneNumber(@PathVariable Long id,
                                   @Pattern(regexp = "^(7)([0-9]{10})$",
@@ -71,6 +78,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/email")
+    @Operation(summary = "Add email")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public UserDto addEmail(@PathVariable Long id,
                             @Email(message = "Incorrect email format")
@@ -80,6 +88,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/phoneNumber")
+    @Operation(summary = "Update phone number")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public UserDto updatePhoneNumber(@PathVariable Long id,
                                      @Pattern(regexp = "^(7)([0-9]{10})$",
@@ -90,6 +99,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/email")
+    @Operation(summary = "Update email")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public UserDto updateEmail(@PathVariable Long id,
                                @Email(message = "Incorrect email format")
@@ -99,18 +109,21 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete user by id")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public void deleteById(@PathVariable Long id) {
         userService.delete(id);
     }
 
     @DeleteMapping("/{id}/phoneNumber")
+    @Operation(summary = "Delete phone number")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public void deletePhoneNumber(@PathVariable Long id) {
         userService.deletePhoneNumber(id);
     }
 
     @DeleteMapping("/{id}/email")
+    @Operation(summary = "Delete email")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public void deleteEmail(@PathVariable Long id) {
         userService.deleteEmail(id);

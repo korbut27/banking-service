@@ -37,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
         jwtResponse.setRefreshToken(jwtTokenProvider.createRefreshToken(
                 user.getId(), user.getUsername())
         );
+
         return jwtResponse;
     }
 

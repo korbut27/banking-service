@@ -5,6 +5,8 @@ import com.example.bankingservice.domain.user.User;
 import com.example.bankingservice.repository.UserRepository;
 import com.example.bankingservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,28 +23,34 @@ import java.time.LocalDate;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
     private final PasswordEncoder passwordEncoder;
+
+    private static final Logger logger = LogManager.getLogger(AccountServiceImpl.class);
 
     @Override
     @Transactional(readOnly = true)
     public User getById(Long id) {
-        return userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+        logger.debug("A user" + user + "is received by id:" + id);
+        return user;
     }
 
     @Override
-    public User getByUsername(
-            final String username
-    ) {
-        return userRepository.findByUsername(username)
+    public User getByUsername(final String username) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found."));
+        logger.debug("A user" + user + "is received by username:" + username);
+        return user;
     }
 
     @Override
     @Transactional
     public User updatePhoneNumber(Long id, String phoneNumber) {
         userRepository.updatePhoneNumber(id, phoneNumber);
+        logger.debug("A user with an id" + id +"has had his number changed to" + phoneNumber);
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
@@ -51,6 +59,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User updateEmail(Long id, String email) {
         userRepository.updateEmail(id, email);
+        logger.debug("A user with an id" + id +"has had his email changed to" + email);
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
@@ -68,6 +77,7 @@ public class UserServiceImpl implements UserService {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        logger.debug("The user has been saved in the database: " + user);
         return user;
     }
 
@@ -79,6 +89,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.savePhoneNumber(id, phoneNumber);
+        logger.debug("A number " + phoneNumber + " has been added to the user's id:" + id);
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
@@ -90,6 +101,7 @@ public class UserServiceImpl implements UserService {
             throw new ResourceNotFoundException("User not found.");
         }
         userRepository.saveEmail(id, email);
+        logger.debug("A email " + email + " has been added to the user's id:" + id);
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
@@ -100,6 +112,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findById(id).isEmpty()) {
             throw new ResourceNotFoundException("User not found.");
         }
+        logger.debug("The user with the id:" + id + " has been deleted");
         userRepository.deleteById(id);
     }
 
@@ -113,8 +126,8 @@ public class UserServiceImpl implements UserService {
                     "Unable to delete the last phone number."
             );
         }
-
         userRepository.deletePhoneNumber(id);
+        logger.debug("The user with the id:" + id + " has deleted his number");
     }
 
     @Override
@@ -128,6 +141,7 @@ public class UserServiceImpl implements UserService {
             );
         }
         userRepository.deleteEmail(id);
+        logger.debug("The user with the id:" + id + " has deleted his email");
     }
 
     @Override

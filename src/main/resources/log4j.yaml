@@ -1,0 +1,11 @@
+log4j:
+  rootLogger: DEBUG, stdout
+
+  appender:
+    stdout:
+      org.apache.log4j.ConsoleAppender
+
+  appender.stdout.layout:
+    org.apache.log4j.PatternLayout
+
+  appender.stdout.layout.ConversionPattern: "%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"

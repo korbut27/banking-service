@@ -7,6 +7,7 @@ import com.example.bankingservice.web.dto.auth.JwtRequest;
 import com.example.bankingservice.web.dto.auth.JwtResponse;
 import com.example.bankingservice.web.dto.user.UserDto;
 import com.example.bankingservice.web.mappers.UserMapper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "Auth controller", description = "Auth API")
 public class AuthController {
 
     private final AuthService authService;
