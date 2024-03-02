@@ -54,10 +54,13 @@ public class AccountServiceImpl implements AccountService {
                         String.format("Account with id %d not found.", senderId)
                 ));
 
-        if (accountRepository.findById(recipientId).isEmpty()) {
-            throw new ResourceNotFoundException(
-                    String.format("Account with id %d not found.", recipientId)
-            );
+        Account recipient = accountRepository.findById(recipientId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Account with id %d not found.", recipientId)
+                ));
+
+        if (sender.getUser().equals(recipient.getUser())) {
+            throw new IllegalStateException("You cannot make the transfer to yourself.");
         }
 
         if (sender.getBalance().compareTo(amount) < 0) {
@@ -79,8 +82,8 @@ public class AccountServiceImpl implements AccountService {
             BigDecimal currentBalance = account.getBalance();
             BigDecimal initialDeposit = account.getInitialDeposit();
 
-            BigDecimal newBalance = currentBalance.multiply(new BigDecimal("1.05")); // Increase balance by 5%
-            BigDecimal maxBalance = initialDeposit.multiply(new BigDecimal("2.07")); // Calculate the maximum balance (207% of initial deposit)
+            BigDecimal newBalance = currentBalance.multiply(new BigDecimal("1.05"));
+            BigDecimal maxBalance = initialDeposit.multiply(new BigDecimal("2.07"));
 
             if (newBalance.compareTo(maxBalance) > 0) {
                 newBalance = maxBalance;

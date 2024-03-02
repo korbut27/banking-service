@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,6 +61,7 @@ public class UserController {
     @Operation(summary = "Create account")
     @PreAuthorize("@customSecurityExpression.canAccessUser(#id)")
     public AccountDto createAccount(@PathVariable Long id,
+                                    @PositiveOrZero(message = "Initial deposit cannot be negative.")
                                     @RequestParam BigDecimal initialDeposit) {
         User user = userService.getById(id);
         Account createdAccount = accountService.create(initialDeposit, user);
